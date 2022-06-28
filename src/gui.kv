@@ -1,0 +1,238 @@
+<GuiLayout>:
+    # Top of the grid is navbar and bottom is everything else
+    id: main_layout
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        GridLayout:
+            cols: 3
+            size_hint_y: None
+            height: 75
+            canvas.before:
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                    source: 'imgs/milkyway.jpg'
+            BoxLayout:
+                orientation: "horizontal"
+                
+                Label:
+                    id: title
+                    text: "PCB to Print Path Files"
+                    font_size: 24
+                    font_name: "imgs/font.otf"
+            BoxLayout:
+            BoxLayout:
+                orientation: "horizontal"
+                Image:
+                    source: "imgs/vt.png"
+                    allow_stretch: False
+                    size_hint_x: 0.5
+                Image:
+                    source: "imgs/nasa.png"
+        BoxLayout:
+            size_hint_y: None
+            width: 100
+            height:50
+
+        GridLayout:
+            rows: 4
+            size_hint_y: None
+            height: 200
+            width: 100
+            Button:
+                text: "1)     Select DXF"
+                on_release: root.file_pop()
+            Button:
+                text: "2)     Configure Layers"
+                on_release: root.layer_sel()
+            Button:
+                text: "3)     Generate STEP"
+                on_release: root.can_generate_steps()
+            BoxLayout:
+
+        GridLayout:
+            cols: 3
+            size_hint_y: None
+            height: 50
+            BoxLayout:
+                orientation: 'horizontal'
+                Label:
+                    id: console_label
+                    text: "Console"
+                    font_size: 18
+                    font_name: "imgs/font.otf"
+        StackLayout:
+            orientation: "tb-lr"
+            background_color: (0, 1, 0, 1)
+            size_hint_y: 1
+            Label:
+                id: console_1
+                text: ""
+                size_hint_y: 0.2
+                text_size: self.size
+                font_size: 13
+            Label:
+                id: console_2
+                text: ""
+                size_hint_y: 0.2
+                text_size: self.size
+                font_size: 13
+            Label:
+                id: console_3
+                text: ""
+                size_hint_y: 0.2
+                text_size: self.size
+                font_size: 13
+            Label:
+                id: console_4
+                text: ""
+                size_hint_y: 0.2
+                text_size: self.size
+                font_size: 13
+            Label:
+                id: console_5
+                text: ""
+                size_hint_y: 0.2
+                text_size: self.size
+                font_size: 13
+        BoxLayout:
+            height:20
+
+<FilePop>:
+    id: file_select
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            id: filechooser
+            path: "../"
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Load"
+                on_release: root.obj.selected(filechooser.selection)
+<LayerPop>:
+    id: layer_select
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        GridLayout:
+            cols: 5
+            size_hint_y: None
+            height: 30
+            id: top_buttons
+            Spinner:
+                id: spin_id
+                text: "Select a Layer"
+                size_hint_y: None
+                font_size: 14
+                size_hint_x: 1.3
+                height: root.height / 10
+                font_name: "imgs/font.otf"
+                # TODO: Format drop down items
+                values: []
+                on_text: root.spinner_clicked(spin_id.text)
+#            Spinner:
+#                id: lay_id
+#                text: "Set Index of Layer"
+#                size_hint_y: None
+#                font_size: 14
+#                height: root.height / 10
+#                font_name: "imgs/font.otf"
+#                # TODO: Format drop down items
+#                values: []
+#                on_text: root.index_clicked(lay_id.text)
+            Spinner:
+                id: layer_options
+                text: "Layer Options"
+                size_hint_y: None
+                font_size: 12
+                height: root.height / 10
+                font_name: "imgs/font.otf"
+                # TODO: Format drop down items
+                values: ["Conductive Traces only", "Conductive Traces AND Vias AND Plane"]
+                on_text: root.layer_options_clicked(layer_options.text)
+            Button:
+                text: "Confirm"
+                id: confirm_button
+                font_size: 14
+                height: root.height / 10
+                font_name: "imgs/font.otf"
+                on_press: root.confirm()
+            Button:
+                text: "Discard Layer"
+                id: discard_layer_button
+                font_size: 14
+                height: root.height / 10
+                font_name: "imgs/font.otf"
+                on_press: root.discard_layer()
+        BoxLayout:
+            orientation: "horizontal"
+            id: main_canvas
+            BoxLayout:
+                orientation: 'horizontal'
+                height: 60
+                size_hint: (0.75, 0.75)
+                id: pic
+            BoxLayout:
+                orientation: "vertical"
+                height: 40
+                id: entities_info
+                BoxLayout:
+                    orientation: 'vertical'
+                    height: 20
+                    Label:
+                        text: "All entities found: "
+                        color: (74/255, 103/255, 161/255)
+                        size_hint_y: 0.2
+                        font_size: 16
+                        font_name: "imgs/font.otf"
+                        
+                    Label:
+                        id: entities_found
+                        text: "Select Layer"
+                        size_hint_y: 0.2
+                        font_size: 14
+                        font_name: "imgs/font.otf"
+                        
+                BoxLayout:
+                    orientation: 'vertical'
+                    height: 20
+                    Label:
+                        text: "Entities overlooked: "
+                        color: (74/255, 103/255, 161/255)
+                        font_size: 16
+                        font_name: "imgs/font.otf"
+                        size_hint_y: 0.2
+                        
+                    Label:
+                        id: entities_overlooked
+                        # TODO: set back to (no entities overlooked if there are none)
+                        text: "Select Layer"
+                        font_size: 14
+                        font_name: "imgs/font.otf"
+                        size_hint_y: 0.2
+                        
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+
+                
+
+
+<ScreenManagement>:
+    GuiLayout:
